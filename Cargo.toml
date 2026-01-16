@@ -1,0 +1,17 @@
+[package]
+name = "verus-relations"
+version = "0.1.0"
+edition = "2021"
+authors = ["Brian G. Milnes"]
+description = "Verified relations (equality, ordering) for Verus"
+license = "Apache-2.0"
+repository = "https://github.com/briangmilnes/verus-relations"
+
+[dependencies]
+vstd = { path = "../verus/source/vstd" }
+builtin = { path = "../verus/source/builtin" }
+builtin_macros = { path = "../verus/source/builtin_macros" }
+
+[features]
+default = []
+

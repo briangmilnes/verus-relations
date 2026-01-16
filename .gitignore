@@ -1,0 +1,8 @@
+/target/
+/rust_verify_test/target/
+Cargo.lock
+*.swp
+*.swo
+*~
+.DS_Store
+
