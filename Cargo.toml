@@ -8,10 +8,14 @@ license = "Apache-2.0"
 repository = "https://github.com/briangmilnes/verus-relations"
 
 [dependencies]
-vstd = { path = "../verus/source/vstd" }
-builtin = { path = "../verus/source/builtin" }
-builtin_macros = { path = "../verus/source/builtin_macros" }
+vstd = "0.0.0-2025-08-12-1837"
 
 [features]
 default = []
+
+[workspace]
+members = ["."]
+
+[patch.crates-io]
+vstd = { path = "/home/milnes/projects/verus/source/vstd" }
 
