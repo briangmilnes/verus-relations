@@ -1,89 +1,41 @@
-//! Proven PartialEq with explicit axioms and Option result.
+//! ProvenPartialEq: PartialEq with required proofs of symmetry and transitivity.
 //!
-//! GOAL: Create ProvenPartialEq requiring proofs of:
-//!   - symmetry: forall x, y. eq(x, y) ==> eq(y, x)
-//!   - transitivity: forall x, y, z. eq(x,y) && eq(y,z) ==> eq(x,z)
-//!   - consistency: ne(a,b) <==> !eq(a,b) (when defined)
+//! Returns Option<bool> to model partial equality (None = undefined, e.g. NaN).
 //!
-//! NOTE: Returns Option<bool> to properly model partial equality:
-//!   - Some(true) = equal
-//!   - Some(false) = not equal
-//!   - None = undefined/incomparable (e.g., NaN vs NaN)
-//!
-//! RESULT: Yes - proofs auto-verified for i32 equality (symmetry, transitivity).
-//!
-//! ## Rust's PartialEq trait (for reference):
-//!
+//! Rust's PartialEq for reference:
 //! ```rust,ignore
-//! pub trait PartialEq<Rhs = Self>
-//! where
-//!     Rhs: ?Sized,
-//! {
-//!     // Required method
+//! pub trait PartialEq<Rhs = Self> where Rhs: ?Sized {
 //!     fn eq(&self, other: &Rhs) -> bool;
-//!
-//!     // Provided method (default: !self.eq(other))
 //!     fn ne(&self, other: &Rhs) -> bool { !self.eq(other) }
 //! }
 //! ```
-//!
-//! Key differences in ProvenPartialEq:
-//! - Returns Option<bool> instead of bool (models undefined comparisons)
-//! - Requires proof of symmetry and transitivity
-//! - No Rhs type parameter (always Self vs Self)
 
 pub mod proven_partialeq {
     use vstd::prelude::*;
 
 verus! {
 
-    /// ProvenPartialEq: Partial equality with proofs.
-    ///
-    /// Returns Option<bool> to model truly partial equality where some
-    /// comparisons may be undefined (like NaN vs anything).
-    ///
-    /// - Some(true) = equal
-    /// - Some(false) = not equal
-    /// - None = undefined/incomparable
     pub trait ProvenPartialEq: View + Sized {
-        /// Spec-level equality, returns Option to model partial equality
         spec fn spec_eq(a: Self::V, b: Self::V) -> Option<bool>;
 
-        //
-        // Required methods (mirrors Rust's PartialEq)
-        //
-
-        /// Runtime equality check
         fn eq(&self, other: &Self) -> (result: Option<bool>)
             ensures result == Self::spec_eq(self@, other@);
         
-        /// Runtime inequality check (complement when defined)
         fn ne(&self, other: &Self) -> (result: Option<bool>)
             ensures result == match Self::spec_eq(self@, other@) {
                 Some(b) => Some(!b),
                 None => None,
             };
-
-        //
-        // Proof obligations (not in Rust's PartialEq)
-        //
         
-        /// Symmetry: equality is symmetric (when defined)
         proof fn proof_symmetry()
             ensures forall |x: Self::V, y: Self::V| 
                 Self::spec_eq(x, y) == Self::spec_eq(y, x);
         
-        /// Transitivity: equality is transitive (when all defined and equal)
         proof fn proof_transitivity()
             ensures forall |x: Self::V, y: Self::V, z: Self::V|
                 (Self::spec_eq(x, y) == Some(true) && Self::spec_eq(y, z) == Some(true)) 
                     ==> Self::spec_eq(x, z) == Some(true);
 
-        //
-        // Convenience methods (provided, not required to implement)
-        //
-
-        /// Check if definitely equal (Some(true))
         fn is_eq(&self, other: &Self) -> (result: bool)
             ensures result == (Self::spec_eq(self@, other@) == Some(true))
         {
@@ -93,7 +45,6 @@ verus! {
             }
         }
 
-        /// Check if definitely not equal (Some(false))
         fn is_ne(&self, other: &Self) -> (result: bool)
             ensures result == (Self::spec_eq(self@, other@) == Some(false))
         {
@@ -103,7 +54,6 @@ verus! {
             }
         }
 
-        /// Check if comparison is defined (not None)
         fn is_comparable(&self, other: &Self) -> (result: bool)
             ensures result == Self::spec_eq(self@, other@).is_some()
         {
@@ -111,28 +61,16 @@ verus! {
         }
     }
 
-    // Implement directly for i32 (always defined)
     impl ProvenPartialEq for i32 {
         open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
         
-        fn eq(&self, other: &Self) -> (result: Option<bool>) {
-            Some(*self == *other)
-        }
-         
-        fn ne(&self, other: &Self) -> (result: Option<bool>) {
-            Some(*self != *other)
-        }
+        fn eq(&self, other: &Self) -> (result: Option<bool>) { Some(*self == *other) }
+        fn ne(&self, other: &Self) -> (result: Option<bool>) { Some(*self != *other) }
         
-        proof fn proof_symmetry() {
-            // Verus proves: spec_eq(x, y) == spec_eq(y, x)
-        }
-        
-        proof fn proof_transitivity() {
-            // Verus proves: spec_eq(x,y)==Some(true) && spec_eq(y,z)==Some(true) ==> spec_eq(x,z)==Some(true)
-        }
+        proof fn proof_symmetry() {}
+        proof fn proof_transitivity() {}
     }
 
-    // Implement for a wrapper struct type
     pub struct MyInt { pub val: i32 }
     
     impl View for MyInt {
@@ -143,21 +81,11 @@ verus! {
     impl ProvenPartialEq for MyInt {
         open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
         
-        fn eq(&self, other: &Self) -> (result: Option<bool>) {
-            Some(self.val == other.val)
-        }
+        fn eq(&self, other: &Self) -> (result: Option<bool>) { Some(self.val == other.val) }
+        fn ne(&self, other: &Self) -> (result: Option<bool>) { Some(self.val != other.val) }
         
-        fn ne(&self, other: &Self) -> (result: Option<bool>) {
-            Some(self.val != other.val)
-        }
-        
-        proof fn proof_symmetry() {
-            // Verus proves: spec_eq(x, y) == spec_eq(y, x)
-        }
-        
-        proof fn proof_transitivity() {
-            // Verus proves transitivity
-        }
+        proof fn proof_symmetry() {}
+        proof fn proof_transitivity() {}
     }
 
 } // verus!
