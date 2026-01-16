@@ -1,4 +1,4 @@
-//! Runtime tests for ProvenEq
+//! Runtime tests for ProvenEq (now with Option<bool> results)
 
 #[allow(unused_imports)]
 use verus_relations::proven_eq::proven_eq::{ProvenEq, MyInt};
@@ -12,12 +12,12 @@ fn test_i32_eq() {
     let c: i32 = 99;
     
     // Test equality (eq is on ProvenPartialEq, inherited by ProvenEq)
-    assert!(<i32 as ProvenPartialEq>::eq(&a, &b));
-    assert!(!<i32 as ProvenPartialEq>::eq(&a, &c));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &b), Some(true));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &c), Some(false));
     
     // Test inequality
-    assert!(!<i32 as ProvenPartialEq>::ne(&a, &b));
-    assert!(<i32 as ProvenPartialEq>::ne(&a, &c));
+    assert_eq!(<i32 as ProvenPartialEq>::ne(&a, &b), Some(false));
+    assert_eq!(<i32 as ProvenPartialEq>::ne(&a, &c), Some(true));
 }
 
 #[test]
@@ -27,12 +27,12 @@ fn test_myint_eq() {
     let c = MyInt { val: 99 };
     
     // Test equality
-    assert!(<MyInt as ProvenPartialEq>::eq(&a, &b));
-    assert!(!<MyInt as ProvenPartialEq>::eq(&a, &c));
+    assert_eq!(<MyInt as ProvenPartialEq>::eq(&a, &b), Some(true));
+    assert_eq!(<MyInt as ProvenPartialEq>::eq(&a, &c), Some(false));
     
     // Test inequality
-    assert!(!<MyInt as ProvenPartialEq>::ne(&a, &b));
-    assert!(<MyInt as ProvenPartialEq>::ne(&a, &c));
+    assert_eq!(<MyInt as ProvenPartialEq>::ne(&a, &b), Some(false));
+    assert_eq!(<MyInt as ProvenPartialEq>::ne(&a, &c), Some(true));
 }
 
 #[test]
@@ -41,8 +41,8 @@ fn test_generic_are_equal() {
     let b: i32 = 10;
     let c: i32 = 20;
     
-    assert!(are_equal(&a, &b));
-    assert!(!are_equal(&a, &c));
+    assert_eq!(are_equal(&a, &b), Some(true));
+    assert_eq!(are_equal(&a, &c), Some(false));
 }
 
 #[test]
@@ -50,8 +50,8 @@ fn test_eq_pair() {
     let same_pair: EqPair<i32> = EqPair { first: 5, second: 5 };
     let diff_pair: EqPair<i32> = EqPair { first: 5, second: 10 };
     
-    assert!(same_pair.are_same());
-    assert!(!diff_pair.are_same());
+    assert_eq!(same_pair.are_same(), Some(true));
+    assert_eq!(diff_pair.are_same(), Some(false));
 }
 
 #[test]
@@ -60,7 +60,11 @@ fn test_reflexivity_at_runtime() {
     let values = vec![0, 1, -1, i32::MAX, i32::MIN, 42, -42];
     
     for v in values {
-        assert!(<i32 as ProvenPartialEq>::eq(&v, &v), "reflexivity failed for {}", v);
+        assert_eq!(
+            <i32 as ProvenPartialEq>::eq(&v, &v), 
+            Some(true), 
+            "reflexivity failed for {}", v
+        );
     }
 }
 
@@ -87,16 +91,16 @@ fn test_transitivity_at_runtime() {
     let b: i32 = 7;
     let c: i32 = 7;
     
-    assert!(<i32 as ProvenPartialEq>::eq(&a, &b));
-    assert!(<i32 as ProvenPartialEq>::eq(&b, &c));
-    assert!(<i32 as ProvenPartialEq>::eq(&a, &c));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &b), Some(true));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&b, &c), Some(true));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &c), Some(true));
     
     // Also check that unequal chains don't falsely trigger
     let x: i32 = 1;
     let y: i32 = 2;
     let z: i32 = 2;
     
-    assert!(!<i32 as ProvenPartialEq>::eq(&x, &y));
-    assert!(<i32 as ProvenPartialEq>::eq(&y, &z));
-    assert!(!<i32 as ProvenPartialEq>::eq(&x, &z));  // transitivity doesn't apply when first link fails
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&x, &y), Some(false));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&y, &z), Some(true));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&x, &z), Some(false));  // transitivity doesn't apply when first link fails
 }

@@ -1,13 +1,14 @@
-//! Proven PartialEq with explicit axioms.
+//! Proven PartialEq with explicit axioms and Option result.
 //!
 //! GOAL: Create ProvenPartialEq requiring proofs of:
 //!   - symmetry: forall x, y. eq(x, y) ==> eq(y, x)
 //!   - transitivity: forall x, y, z. eq(x,y) && eq(y,z) ==> eq(x,z)
-//!   - consistency: ne(a,b) <==> !eq(a,b) (proven by construction via ensures)
+//!   - consistency: ne(a,b) <==> !eq(a,b) (when defined)
 //!
-//! NOTE: Rust's PartialEq does NOT require reflexivity (forall x. eq(x, x)) because
-//! IEEE 754 NaN != NaN. Rust is making the exception the rule here, which really
-//! weakens PartialEq by not requiring reflexivity for types where it should hold.
+//! NOTE: Returns Option<bool> to properly model partial equality:
+//!   - Some(true) = equal
+//!   - Some(false) = not equal
+//!   - None = undefined/incomparable (e.g., NaN vs NaN)
 //!
 //! RESULT: Yes - proofs auto-verified for i32 equality (symmetry, transitivity).
 
@@ -16,62 +17,67 @@ pub mod proven_partialeq {
 
 verus! {
 
-    // Trait with explicit axioms.
-    // NOTE: Rust's PartialEq omits reflexivity because IEEE NaN != NaN.
-    // This makes the exception the rule, weakening PartialEq for types where reflexivity holds.
+    /// ProvenPartialEq: Partial equality with proofs.
+    ///
+    /// Returns Option<bool> to model truly partial equality where some
+    /// comparisons may be undefined (like NaN vs anything).
+    ///
+    /// - Some(true) = equal
+    /// - Some(false) = not equal
+    /// - None = undefined/incomparable
     pub trait ProvenPartialEq: View + Sized {
-        spec fn spec_eq(a: Self::V, b: Self::V) -> bool;
+        /// Spec-level equality, returns Option to model partial equality
+        spec fn spec_eq(a: Self::V, b: Self::V) -> Option<bool>;
 
-        fn eq(&self, other: &Self) -> (result: bool)
+        /// Runtime equality check
+        fn eq(&self, other: &Self) -> (result: Option<bool>)
             ensures result == Self::spec_eq(self@, other@);
         
-        fn ne(&self, other: &Self) -> (result: bool)
-            ensures result == !Self::spec_eq(self@, other@);  // Consistency by construction
+        /// Runtime inequality check (complement when defined)
+        fn ne(&self, other: &Self) -> (result: Option<bool>)
+            ensures result == match Self::spec_eq(self@, other@) {
+                Some(b) => Some(!b),
+                None => None,
+            };
         
-        // Reflexivity commented out to match Rust's PartialEq (IEEE NaN != NaN exception)
-        // proof fn proof_reflexivity()
-        //     ensures forall |x: Self::V| Self::spec_eq(x, x);
-        
+        /// Symmetry: equality is symmetric (when defined)
         proof fn proof_symmetry()
             ensures forall |x: Self::V, y: Self::V| 
-                Self::spec_eq(x, y) ==> Self::spec_eq(y, x);
+                Self::spec_eq(x, y) == Self::spec_eq(y, x);
         
+        /// Transitivity: equality is transitive (when all defined and equal)
         proof fn proof_transitivity()
             ensures forall |x: Self::V, y: Self::V, z: Self::V|
-                (Self::spec_eq(x, y) && Self::spec_eq(y, z)) ==> Self::spec_eq(x, z);
+                (Self::spec_eq(x, y) == Some(true) && Self::spec_eq(y, z) == Some(true)) 
+                    ==> Self::spec_eq(x, z) == Some(true);
     }
 
-    // Implement directly for i32
+    // Implement directly for i32 (always defined)
     impl ProvenPartialEq for i32 {
-        open spec fn spec_eq(a: i32, b: i32) -> bool { a == b }
+        open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
         
-        fn eq(&self, other: &Self) -> (result: bool) {
-            *self == *other
+        fn eq(&self, other: &Self) -> (result: Option<bool>) {
+            Some(*self == *other)
         }
          
-        fn ne(&self, other: &Self) -> (result: bool) {
-            *self != *other
+        fn ne(&self, other: &Self) -> (result: Option<bool>) {
+            Some(*self != *other)
         }
         
-        // Reflexivity commented out (IEEE NaN exception made the rule)
-        // proof fn proof_reflexivity() {
-        //     // Verus proves: forall x. x == x
-        // }
-        
         proof fn proof_symmetry() {
-            // Verus proves: x == y ==> y == x
+            // Verus proves: spec_eq(x, y) == spec_eq(y, x)
         }
         
         proof fn proof_transitivity() {
-            // Verus proves: x == y && y == z ==> x == z
+            // Verus proves: spec_eq(x,y)==Some(true) && spec_eq(y,z)==Some(true) ==> spec_eq(x,z)==Some(true)
         }
     }
 
-    // Use i32 impl (disambiguate from std PartialEq)
-    fn _test_use_i32(a: i32, b: i32) -> (result: bool)
-        ensures result == (a@ == b@)
+    // Use i32 impl
+    fn _test_use_i32(a: i32, b: i32) -> (result: Option<bool>)
+        ensures result == Some(a@ == b@)
     {
-        ProvenPartialEq::eq(&a, &b)
+        <i32 as ProvenPartialEq>::eq(&a, &b)
     }
 
     // Implement for a wrapper struct type
@@ -83,37 +89,31 @@ verus! {
     }
     
     impl ProvenPartialEq for MyInt {
-        open spec fn spec_eq(a: i32, b: i32) -> bool { a == b }
+        open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
         
-        fn eq(&self, other: &Self) -> (result: bool) {
-            self.val == other.val
+        fn eq(&self, other: &Self) -> (result: Option<bool>) {
+            Some(self.val == other.val)
         }
         
-        fn ne(&self, other: &Self) -> (result: bool) {
-            self.val != other.val
+        fn ne(&self, other: &Self) -> (result: Option<bool>) {
+            Some(self.val != other.val)
         }
-        
-        // Reflexivity commented out (IEEE NaN exception made the rule)
-        // proof fn proof_reflexivity() {
-        //     // Verus proves: forall x. x == x
-        // }
         
         proof fn proof_symmetry() {
-            // Verus proves: x == y ==> y == x
+            // Verus proves: spec_eq(x, y) == spec_eq(y, x)
         }
         
         proof fn proof_transitivity() {
-            // Verus proves: x == y && y == z ==> x == z
+            // Verus proves transitivity
         }
     }
 
     // Use MyInt impl
-    fn _test_use_myint(a: MyInt, b: MyInt) -> (result: bool)
-        ensures result == (a@ == b@)
+    fn _test_use_myint(a: MyInt, b: MyInt) -> (result: Option<bool>)
+        ensures result == Some(a@ == b@)
     {
         a.eq(&b)
     }
 
 } // verus!
 }
-

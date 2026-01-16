@@ -1,5 +1,4 @@
-// Copyright (c) 2025 Brian G. Milnes
-//! Runtime tests for ProvenPartialEq
+//! Runtime tests for ProvenPartialEq (now with Option<bool> results)
 
 use verus_relations::proven_partialeq::proven_partialeq::{ProvenPartialEq, MyInt};
 use verus_relations::use_proven_partialeq::use_proven_partialeq::{are_equal, EqPair};
@@ -8,67 +7,74 @@ use verus_relations::use_proven_partialeq::use_proven_partialeq::{are_equal, EqP
 fn test_i32_eq() {
     let a: i32 = 42;
     let b: i32 = 42;
-    let c: i32 = 17;
+    let c: i32 = 99;
     
-    assert!(ProvenPartialEq::eq(&a, &b));
-    assert!(!ProvenPartialEq::eq(&a, &c));
+    // Test equality - now returns Option<bool>
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &b), Some(true));
+    assert_eq!(<i32 as ProvenPartialEq>::eq(&a, &c), Some(false));
 }
 
 #[test]
 fn test_i32_ne() {
     let a: i32 = 42;
     let b: i32 = 42;
-    let c: i32 = 17;
+    let c: i32 = 99;
     
-    assert!(!ProvenPartialEq::ne(&a, &b));
-    assert!(ProvenPartialEq::ne(&a, &c));
+    // Test inequality - now returns Option<bool>
+    assert_eq!(<i32 as ProvenPartialEq>::ne(&a, &b), Some(false));
+    assert_eq!(<i32 as ProvenPartialEq>::ne(&a, &c), Some(true));
 }
 
 #[test]
 fn test_myint_eq() {
     let a = MyInt { val: 42 };
     let b = MyInt { val: 42 };
-    let c = MyInt { val: 17 };
+    let c = MyInt { val: 99 };
     
-    assert!(a.eq(&b));
-    assert!(!a.eq(&c));
+    assert_eq!(<MyInt as ProvenPartialEq>::eq(&a, &b), Some(true));
+    assert_eq!(<MyInt as ProvenPartialEq>::eq(&a, &c), Some(false));
 }
 
 #[test]
 fn test_myint_ne() {
     let a = MyInt { val: 42 };
     let b = MyInt { val: 42 };
-    let c = MyInt { val: 17 };
+    let c = MyInt { val: 99 };
     
-    assert!(!a.ne(&b));
-    assert!(a.ne(&c));
+    assert_eq!(<MyInt as ProvenPartialEq>::ne(&a, &b), Some(false));
+    assert_eq!(<MyInt as ProvenPartialEq>::ne(&a, &c), Some(true));
 }
 
 #[test]
 fn test_are_equal_generic() {
-    let a: i32 = 100;
-    let b: i32 = 100;
-    let c: i32 = 200;
+    let a: i32 = 10;
+    let b: i32 = 10;
+    let c: i32 = 20;
     
-    assert!(are_equal(&a, &b));
-    assert!(!are_equal(&a, &c));
+    assert_eq!(are_equal(&a, &b), Some(true));
+    assert_eq!(are_equal(&a, &c), Some(false));
 }
 
 #[test]
 fn test_eq_pair() {
-    let pair_same = EqPair { first: 5i32, second: 5i32 };
-    let pair_diff = EqPair { first: 5i32, second: 10i32 };
+    let same: EqPair<i32> = EqPair { first: 5, second: 5 };
+    let diff: EqPair<i32> = EqPair { first: 5, second: 10 };
     
-    assert!(pair_same.are_same());
-    assert!(!pair_diff.are_same());
+    assert_eq!(same.are_same(), Some(true));
+    assert_eq!(diff.are_same(), Some(false));
 }
 
 #[test]
 fn test_eq_pair_myint() {
-    let pair_same = EqPair { first: MyInt { val: 7 }, second: MyInt { val: 7 } };
-    let pair_diff = EqPair { first: MyInt { val: 7 }, second: MyInt { val: 14 } };
+    let same: EqPair<MyInt> = EqPair { 
+        first: MyInt { val: 7 }, 
+        second: MyInt { val: 7 } 
+    };
+    let diff: EqPair<MyInt> = EqPair { 
+        first: MyInt { val: 7 }, 
+        second: MyInt { val: 8 } 
+    };
     
-    assert!(pair_same.are_same());
-    assert!(!pair_diff.are_same());
+    assert_eq!(same.are_same(), Some(true));
+    assert_eq!(diff.are_same(), Some(false));
 }
-
