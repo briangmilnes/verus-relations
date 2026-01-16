@@ -1,4 +1,3 @@
-// Copyright (c) 2025 Brian G. Milnes
 //! Verified relations (equality, ordering) for Verus.
 //!
 //! This library provides traits that require proofs of mathematical properties

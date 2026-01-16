@@ -1,0 +1,15 @@
+---
+description: No copyright notices in this project
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# No Copyright
+
+This project does not use copyright notices in source files.
+
+Do NOT add copyright headers like:
+- `// Copyright (c) 2025 ...`
+- `// SPDX-License-Identifier: ...`
+
+Just start files with the module doc comment (`//!`) or code directly.

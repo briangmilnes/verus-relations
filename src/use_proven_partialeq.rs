@@ -1,4 +1,3 @@
-// Copyright (c) 2025 Brian G. Milnes
 //! Use ProvenPartialEq as a trait bound
 //!
 //! GOAL: Demonstrate using ProvenPartialEq as a generic trait bound

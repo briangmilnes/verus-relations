@@ -1,4 +1,3 @@
-// Copyright (c) 2025 Brian G. Milnes
 //! Proven PartialEq with explicit axioms.
 //!
 //! GOAL: Create ProvenPartialEq requiring proofs of:
