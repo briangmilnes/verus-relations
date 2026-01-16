@@ -28,11 +28,11 @@ verus! {
             };
         
         proof fn proof_symmetry()
-            ensures forall |x: Self::V, y: Self::V| 
-                Self::spec_eq(x, y) == Self::spec_eq(y, x);
+            ensures forall |x: Self::V, y: Self::V| #[trigger] Self::spec_eq(x, y) == Self::spec_eq(y, x);
         
         proof fn proof_transitivity()
             ensures forall |x: Self::V, y: Self::V, z: Self::V|
+                #![trigger Self::spec_eq(x, y), Self::spec_eq(y, z)]
                 (Self::spec_eq(x, y) == Some(true) && Self::spec_eq(y, z) == Some(true)) 
                     ==> Self::spec_eq(x, z) == Some(true);
 

@@ -10,7 +10,7 @@ verus! {
 
     pub trait ProvenEq: ProvenPartialEq {
         proof fn proof_reflexivity()
-            ensures forall |x: Self::V| Self::spec_eq(x, x) == Some(true);
+            ensures forall |x: Self::V| #[trigger] Self::spec_eq(x, x) == Some(true);
     }
 
     impl ProvenEq for i32 {

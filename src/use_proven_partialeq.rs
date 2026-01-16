@@ -16,7 +16,6 @@ verus! {
         requires T::spec_eq(_a@, _b@) == T::spec_eq(_b@, _a@)
         ensures T::spec_eq(_b@, _a@) == T::spec_eq(_a@, _b@)
     {
-        proof { T::proof_symmetry(); }
     }
 
     pub fn transitivity_example<T: ProvenPartialEq>(_a: &T, _b: &T, _c: &T)
