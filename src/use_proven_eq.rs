@@ -6,6 +6,8 @@
 pub mod use_proven_eq {
     use vstd::prelude::*;
     use crate::proven_eq::proven_eq::ProvenEq;
+    #[allow(unused_imports)]
+    use crate::proven_partialeq::proven_partialeq::ProvenPartialEq;
 
 verus! {
 
