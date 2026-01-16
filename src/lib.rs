@@ -5,4 +5,6 @@
 
 pub mod proven_partialeq;
 pub mod use_proven_partialeq;
+pub mod proven_eq;
+pub mod use_proven_eq;
 

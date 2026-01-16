@@ -26,9 +26,9 @@ verus! {
     // }
 
     // Function that uses symmetry proof
-    pub fn symmetry_example<T: ProvenPartialEq>(a: &T, b: &T)
-        requires T::spec_eq(a@, b@)
-        ensures T::spec_eq(b@, a@)
+    pub fn symmetry_example<T: ProvenPartialEq>(_a: &T, _b: &T)
+        requires T::spec_eq(_a@, _b@)
+        ensures T::spec_eq(_b@, _a@)
     {
         proof {
             T::proof_symmetry();
@@ -36,9 +36,9 @@ verus! {
     }
 
     // Function that uses transitivity proof
-    pub fn transitivity_example<T: ProvenPartialEq>(a: &T, b: &T, c: &T)
-        requires T::spec_eq(a@, b@), T::spec_eq(b@, c@)
-        ensures T::spec_eq(a@, c@)
+    pub fn transitivity_example<T: ProvenPartialEq>(_a: &T, _b: &T, _c: &T)
+        requires T::spec_eq(_a@, _b@), T::spec_eq(_b@, _c@)
+        ensures T::spec_eq(_a@, _c@)
     {
         proof {
             T::proof_transitivity();
@@ -46,12 +46,12 @@ verus! {
     }
 
     // Use with i32
-    fn test_with_i32() {
+    fn _test_with_i32() {
         let x: i32 = 42;
         let y: i32 = 42;
         
-        let eq = are_equal(&x, &y);
-        assert(eq == (x@ == y@));
+        let _eq = are_equal(&x, &y);
+        assert(_eq == (x@ == y@));
         
         // Reflexivity commented out (IEEE NaN exception made the rule)
         // reflexivity_example(&x);
