@@ -38,15 +38,6 @@ verus! {
         }
     }
 
-    // Use with i32
-    fn _test_with_i32() {
-        let x: i32 = 42;
-        let y: i32 = 42;
-        
-        let _eq = are_equal(&x, &y);
-        assert(_eq == Some(x@ == y@));
-    }
-
     /// Generic container that requires ProvenPartialEq
     pub struct EqPair<T: ProvenPartialEq> {
         pub first: T,

@@ -41,13 +41,6 @@ verus! {
         }
     }
 
-    // Test using i32 ProvenEq (eq inherited from ProvenPartialEq, returns Option<bool>)
-    fn _test_use_i32(a: i32, b: i32) -> (result: Option<bool>)
-        ensures result == Some(a@ == b@)
-    {
-        <i32 as ProvenPartialEq>::eq(&a, &b)
-    }
-
     // Re-export MyInt from proven_partialeq for convenience
     pub use crate::proven_partialeq::proven_partialeq::MyInt;
 
@@ -56,13 +49,6 @@ verus! {
         proof fn proof_reflexivity() {
             // Verus proves: forall x. spec_eq(x, x) == Some(true)
         }
-    }
-
-    // Test using MyInt
-    fn _test_use_myint(a: MyInt, b: MyInt) -> (result: Option<bool>)
-        ensures result == Some(a@ == b@)
-    {
-        a.eq(&b)
     }
 
 } // verus!

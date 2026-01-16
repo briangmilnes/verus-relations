@@ -132,6 +132,13 @@ verus! {
         }
     }
 
+    // Use i32 impl
+    fn _test_use_i32(a: i32, b: i32) -> (result: Option<bool>)
+        ensures result == Some(a@ == b@)
+    {
+        <i32 as ProvenPartialEq>::eq(&a, &b)
+    }
+
     // Implement for a wrapper struct type
     pub struct MyInt { pub val: i32 }
     
@@ -158,6 +165,38 @@ verus! {
         proof fn proof_transitivity() {
             // Verus proves transitivity
         }
+    }
+
+    // Use MyInt impl
+    fn _test_use_myint(a: MyInt, b: MyInt) -> (result: Option<bool>)
+        ensures result == Some(a@ == b@)
+    {
+        a.eq(&b)
+    }
+
+    // Test convenience methods
+    fn _test_convenience_methods() {
+        let a: i32 = 42;
+        let b: i32 = 42;
+        let c: i32 = 99;
+        
+        // is_eq
+        let _is_eq_ab = <i32 as ProvenPartialEq>::is_eq(&a, &b);
+        let _is_eq_ac = <i32 as ProvenPartialEq>::is_eq(&a, &c);
+        assert(_is_eq_ab);
+        assert(!_is_eq_ac);
+        
+        // is_ne
+        let _is_ne_ab = <i32 as ProvenPartialEq>::is_ne(&a, &b);
+        let _is_ne_ac = <i32 as ProvenPartialEq>::is_ne(&a, &c);
+        assert(!_is_ne_ab);
+        assert(_is_ne_ac);
+        
+        // is_comparable (always true for i32)
+        let _cmp_ab = <i32 as ProvenPartialEq>::is_comparable(&a, &b);
+        let _cmp_ac = <i32 as ProvenPartialEq>::is_comparable(&a, &c);
+        assert(_cmp_ab);
+        assert(_cmp_ac);
     }
 
 } // verus!

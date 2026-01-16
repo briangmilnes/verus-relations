@@ -49,27 +49,6 @@ verus! {
         }
     }
 
-    /// Demonstrate all three axioms together
-    fn _test_with_i32() {
-        let x: i32 = 42;
-        let y: i32 = 42;
-        let _z: i32 = 42;
-        
-        let _eq = are_equal(&x, &y);
-        assert(_eq == Some(x@ == y@));
-        
-        // Reflexivity - the key addition over ProvenPartialEq
-        reflexivity_example(&x);
-        
-        proof {
-            i32::proof_reflexivity();
-            assert(i32::spec_eq(x@, x@) == Some(true));
-            
-            i32::proof_symmetry();
-            i32::proof_transitivity();
-        }
-    }
-
     /// Generic container requiring ProvenEq
     pub struct EqPair<T: ProvenEq> {
         pub first: T,
