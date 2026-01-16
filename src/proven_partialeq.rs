@@ -1,12 +1,16 @@
 // Copyright (c) 2025 Brian G. Milnes
-//! Proven PartialEq with forall axiom proofs
+//! Proven PartialEq with explicit axioms.
 //!
 //! GOAL: Create ProvenPartialEq requiring proofs of:
-//!   - reflexivity: forall x. eq(x, x)
 //!   - symmetry: forall x, y. eq(x, y) ==> eq(y, x)
 //!   - transitivity: forall x, y, z. eq(x,y) && eq(y,z) ==> eq(x,z)
 //!   - consistency: ne(a,b) <==> !eq(a,b) (proven by construction via ensures)
-//! RESULT: Yes - all proofs auto-verified for i32 equality (reflexivity, symmetry, transitivity).
+//!
+//! NOTE: Rust's PartialEq does NOT require reflexivity (forall x. eq(x, x)) because
+//! IEEE 754 NaN != NaN. Rust is making the exception the rule here, which really
+//! weakens PartialEq by not requiring reflexivity for types where it should hold.
+//!
+//! RESULT: Yes - proofs auto-verified for i32 equality (symmetry, transitivity).
 
 pub mod proven_partialeq {
     use vstd::prelude::*;
@@ -14,6 +18,8 @@ pub mod proven_partialeq {
 verus! {
 
     // Trait with explicit axioms.
+    // NOTE: Rust's PartialEq omits reflexivity because IEEE NaN != NaN.
+    // This makes the exception the rule, weakening PartialEq for types where reflexivity holds.
     pub trait ProvenPartialEq: View + Sized {
         spec fn spec_eq(a: Self::V, b: Self::V) -> bool;
 
@@ -23,8 +29,9 @@ verus! {
         fn ne(&self, other: &Self) -> (result: bool)
             ensures result == !Self::spec_eq(self@, other@);  // Consistency by construction
         
-        proof fn proof_reflexivity()
-            ensures forall |x: Self::V| Self::spec_eq(x, x);
+        // Reflexivity commented out to match Rust's PartialEq (IEEE NaN != NaN exception)
+        // proof fn proof_reflexivity()
+        //     ensures forall |x: Self::V| Self::spec_eq(x, x);
         
         proof fn proof_symmetry()
             ensures forall |x: Self::V, y: Self::V| 
@@ -47,9 +54,10 @@ verus! {
             *self != *other
         }
         
-        proof fn proof_reflexivity() {
-            // Verus proves: forall x. x == x
-        }
+        // Reflexivity commented out (IEEE NaN exception made the rule)
+        // proof fn proof_reflexivity() {
+        //     // Verus proves: forall x. x == x
+        // }
         
         proof fn proof_symmetry() {
             // Verus proves: x == y ==> y == x
@@ -86,9 +94,10 @@ verus! {
             self.val != other.val
         }
         
-        proof fn proof_reflexivity() {
-            // Verus proves: forall x. x == x
-        }
+        // Reflexivity commented out (IEEE NaN exception made the rule)
+        // proof fn proof_reflexivity() {
+        //     // Verus proves: forall x. x == x
+        // }
         
         proof fn proof_symmetry() {
             // Verus proves: x == y ==> y == x
