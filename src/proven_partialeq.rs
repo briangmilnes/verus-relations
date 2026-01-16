@@ -61,6 +61,27 @@ verus! {
         }
     }
 
+    // Broadcast lemmas for automatic axiom availability
+    pub broadcast proof fn lemma_symmetry<T: ProvenPartialEq>(x: T::V, y: T::V)
+        ensures #[trigger] T::spec_eq(x, y) == T::spec_eq(y, x)
+    {
+        T::proof_symmetry();
+    }
+
+    pub broadcast proof fn lemma_transitivity<T: ProvenPartialEq>(x: T::V, y: T::V, z: T::V)
+        requires 
+            #[trigger] T::spec_eq(x, y) == Some(true), 
+            #[trigger] T::spec_eq(y, z) == Some(true)
+        ensures T::spec_eq(x, z) == Some(true)
+    {
+        T::proof_transitivity();
+    }
+
+    pub broadcast group group_proven_partialeq {
+        lemma_symmetry,
+        lemma_transitivity,
+    }
+
     impl ProvenPartialEq for i32 {
         open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
         

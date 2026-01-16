@@ -4,9 +4,13 @@ pub mod use_proven_eq {
     use vstd::prelude::*;
     use crate::proven_eq::proven_eq::ProvenEq;
     #[allow(unused_imports)]
-    use crate::proven_partialeq::proven_partialeq::ProvenPartialEq;
+    use crate::proven_eq::proven_eq::group_proven_eq;
+    #[allow(unused_imports)]
+    use crate::proven_partialeq::proven_partialeq::group_proven_partialeq;
 
 verus! {
+
+    broadcast use { group_proven_partialeq, group_proven_eq };
 
     pub fn are_equal<T: ProvenEq>(a: &T, b: &T) -> (result: Option<bool>)
         ensures result == T::spec_eq(a@, b@)
@@ -17,7 +21,6 @@ verus! {
     pub fn reflexivity_example<T: ProvenEq>(_x: &T)
         ensures T::spec_eq(_x@, _x@) == Some(true)
     {
-        proof { T::proof_reflexivity(); }
     }
 
     pub fn symmetry_example<T: ProvenEq>(_a: &T, _b: &T)
@@ -32,7 +35,6 @@ verus! {
             T::spec_eq(_b@, _c@) == Some(true)
         ensures T::spec_eq(_a@, _c@) == Some(true)
     {
-        proof { T::proof_transitivity(); }
     }
 
     pub struct EqPair<T: ProvenEq> {
@@ -54,8 +56,6 @@ verus! {
                 T::spec_eq(self.second@, self.second@) == Some(true),
                 T::spec_eq(self.second@, self.first@) == Some(true),
         {
-            T::proof_reflexivity();
-            T::proof_symmetry();
         }
     }
 

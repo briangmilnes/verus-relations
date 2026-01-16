@@ -3,8 +3,12 @@
 pub mod use_proven_partialeq {
     use vstd::prelude::*;
     use crate::proven_partialeq::proven_partialeq::ProvenPartialEq;
+    #[allow(unused_imports)]
+    use crate::proven_partialeq::proven_partialeq::group_proven_partialeq;
 
 verus! {
+
+    broadcast use group_proven_partialeq;
 
     pub fn are_equal<T: ProvenPartialEq>(a: &T, b: &T) -> (result: Option<bool>)
         ensures result == T::spec_eq(a@, b@)
@@ -24,7 +28,6 @@ verus! {
             T::spec_eq(_b@, _c@) == Some(true)
         ensures T::spec_eq(_a@, _c@) == Some(true)
     {
-        proof { T::proof_transitivity(); }
     }
 
     pub struct EqPair<T: ProvenPartialEq> {

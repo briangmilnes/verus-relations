@@ -13,6 +13,17 @@ verus! {
             ensures forall |x: Self::V| #[trigger] Self::spec_eq(x, x) == Some(true);
     }
 
+    // Broadcast lemma for automatic reflexivity
+    pub broadcast proof fn lemma_reflexivity<T: ProvenEq>(x: T::V)
+        ensures #[trigger] T::spec_eq(x, x) == Some(true)
+    {
+        T::proof_reflexivity();
+    }
+
+    pub broadcast group group_proven_eq {
+        lemma_reflexivity,
+    }
+
     impl ProvenEq for i32 {
         proof fn proof_reflexivity() {}
     }
