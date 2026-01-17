@@ -31,10 +31,68 @@ pub broadcast group group_proven_eq {
     lemma_reflexivity,
 }
 
+// Signed integers
+impl ProvenEq for i8 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for i16 {
+    proof fn proof_reflexivity() {
+    }
+}
+
 impl ProvenEq for i32 {
     proof fn proof_reflexivity() {
     }
 }
 
+impl ProvenEq for i64 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for i128 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for isize {
+    proof fn proof_reflexivity() {
+    }
+}
+
+// Unsigned integers
+impl ProvenEq for u8 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for u16 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for u32 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for u64 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for u128 {
+    proof fn proof_reflexivity() {
+    }
+}
+
+impl ProvenEq for usize {
+    proof fn proof_reflexivity() {
+    }
+}
+
+// Note: bool and char are omitted because vstd doesn't provide PartialEqSpec for them
 } // verus!
 }

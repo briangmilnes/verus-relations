@@ -168,6 +168,59 @@ pub broadcast group group_proven_ord {
     lemma_cmp_transitivity_ge,
 }
 
+// Signed integers
+impl ProvenOrd for i8 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for i16 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
 impl ProvenOrd for i32 {
     proof fn proof_obeys_cmp_spec() {
     }
@@ -194,5 +247,241 @@ impl ProvenOrd for i32 {
     }
 }
 
+impl ProvenOrd for i64 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for i128 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for isize {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+// Unsigned integers
+impl ProvenOrd for u8 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for u16 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for u32 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for u64 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for u128 {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+impl ProvenOrd for usize {
+    proof fn proof_obeys_cmp_spec() {
+    }
+
+    proof fn proof_totality() {
+    }
+
+    proof fn proof_antisymmetry() {
+    }
+
+    proof fn proof_consistency_with_eq() {
+    }
+
+    proof fn proof_cmp_transitivity_lt() {
+    }
+
+    proof fn proof_cmp_transitivity_le() {
+    }
+
+    proof fn proof_cmp_transitivity_gt() {
+    }
+
+    proof fn proof_cmp_transitivity_ge() {
+    }
+}
+
+// Note: bool and char are omitted because vstd doesn't provide OrdSpec for them
 } // verus!
 }

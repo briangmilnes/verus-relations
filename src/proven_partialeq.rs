@@ -62,7 +62,29 @@ pub broadcast group group_proven_partialeq {
     lemma_transitivity,
 }
 
-// i32 already has eq_spec in vstd
+// Signed integers
+impl ProvenPartialEq for i8 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for i16 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
 impl ProvenPartialEq for i32 {
     proof fn proof_obeys_eq_spec() {
     }
@@ -74,5 +96,106 @@ impl ProvenPartialEq for i32 {
     }
 }
 
+impl ProvenPartialEq for i64 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for i128 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for isize {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+// Unsigned integers
+impl ProvenPartialEq for u8 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for u16 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for u32 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for u64 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for u128 {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+impl ProvenPartialEq for usize {
+    proof fn proof_obeys_eq_spec() {
+    }
+
+    proof fn proof_symmetry() {
+    }
+
+    proof fn proof_transitivity() {
+    }
+}
+
+// Note: bool and char are omitted because vstd doesn't provide PartialEqSpec for them
 } // verus!
 }

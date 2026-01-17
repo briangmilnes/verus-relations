@@ -78,6 +78,29 @@ pub broadcast group group_proven_partialord {
     lemma_duality,
 }
 
+// Signed integers
+impl ProvenPartialOrd for i8 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for i16 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
 impl ProvenPartialOrd for i32 {
     proof fn proof_obeys_partial_cmp_spec() {
     }
@@ -89,5 +112,106 @@ impl ProvenPartialOrd for i32 {
     }
 }
 
+impl ProvenPartialOrd for i64 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for i128 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for isize {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+// Unsigned integers
+impl ProvenPartialOrd for u8 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for u16 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for u32 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for u64 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for u128 {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+impl ProvenPartialOrd for usize {
+    proof fn proof_obeys_partial_cmp_spec() {
+    }
+
+    proof fn proof_transitivity_lt() {
+    }
+
+    proof fn proof_duality() {
+    }
+}
+
+// Note: bool and char are omitted because vstd doesn't provide PartialOrdSpec for them
 } // verus!
 }

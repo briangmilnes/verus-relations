@@ -12,3 +12,5 @@ pub mod proven_ord;
 pub mod proven_partialord;
 pub mod use_proven_ord;
 pub mod use_proven_partialord;
+
+pub mod use_hash_map;
