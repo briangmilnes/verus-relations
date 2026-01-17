@@ -13,6 +13,9 @@ vstd = "0.0.0-2025-08-12-1837"
 [features]
 default = []
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }
+
 [workspace]
 members = ["."]
 

@@ -1,0 +1,17 @@
+# Verbose Responses
+
+## Rule
+
+Put key reasoning and decision-making in visible response text, not just in thinking blocks.
+
+When making decisions about:
+- Which approach to take
+- Why something failed and how to fix it
+- Trade-offs between options
+- What a verification error means
+
+Explain this reasoning in the visible response, not just internally.
+
+## Rationale
+
+Thinking blocks are collapsed and grayed out in Cursor's UI, making them hard to read for users with limited vision. Important reasoning should be visible in the main response.

@@ -1,110 +1,61 @@
-//! ProvenPartialEq: PartialEq with required proofs of symmetry and transitivity.
+//! ProvenPartialEq: Certifies that a PartialEq impl is well-behaved.
 //!
-//! Returns Option<bool> to model partial equality (None = undefined, e.g. NaN).
-//!
-//! Rust's PartialEq for reference:
-//! ```rust,ignore
-//! pub trait PartialEq<Rhs = Self> where Rhs: ?Sized {
-//!     fn eq(&self, other: &Rhs) -> bool;
-//!     fn ne(&self, other: &Rhs) -> bool { !self.eq(other) }
-//! }
-//! ```
+//! Uses vstd's eq_spec, requires proofs of symmetry and transitivity.
 
 pub mod proven_partialeq {
+    #[cfg(verus_keep_ghost)]
     use vstd::prelude::*;
+    #[cfg(verus_keep_ghost)]
+    use vstd::std_specs::cmp::PartialEqSpec;
 
+#[cfg(verus_keep_ghost)]
 verus! {
 
-    pub trait ProvenPartialEq: View + Sized {
-        spec fn spec_eq(a: Self::V, b: Self::V) -> Option<bool>;
+    /// ProvenPartialEq certifies that a PartialEq impl is well-behaved:
+    /// symmetric and transitive by requiring proofs.
+    pub trait ProvenPartialEq: PartialEqSpec + Sized {
+        // Require obeys_eq_spec() == true so vstd's eq_spec is meaningful
+        proof fn proof_obeys_eq_spec()
+            ensures Self::obeys_eq_spec();
 
-        fn eq(&self, other: &Self) -> (result: Option<bool>)
-            ensures result == Self::spec_eq(self@, other@);
-        
-        fn ne(&self, other: &Self) -> (result: Option<bool>)
-            ensures result == match Self::spec_eq(self@, other@) {
-                Some(b) => Some(!b),
-                None => None,
-            };
-        
         proof fn proof_symmetry()
-            ensures forall |x: Self::V, y: Self::V| #[trigger] Self::spec_eq(x, y) == Self::spec_eq(y, x);
+            ensures forall |x: &Self, y: &Self| 
+                #[trigger] x.eq_spec(y) == y.eq_spec(x);
         
         proof fn proof_transitivity()
-            ensures forall |x: Self::V, y: Self::V, z: Self::V|
-                #![trigger Self::spec_eq(x, y), Self::spec_eq(y, z)]
-                (Self::spec_eq(x, y) == Some(true) && Self::spec_eq(y, z) == Some(true)) 
-                    ==> Self::spec_eq(x, z) == Some(true);
-
-        fn is_eq(&self, other: &Self) -> (result: bool)
-            ensures result == (Self::spec_eq(self@, other@) == Some(true))
-        {
-            match self.eq(other) {
-                Some(true) => true,
-                _ => false,
-            }
-        }
-
-        fn is_ne(&self, other: &Self) -> (result: bool)
-            ensures result == (Self::spec_eq(self@, other@) == Some(false))
-        {
-            match self.eq(other) {
-                Some(false) => true,
-                _ => false,
-            }
-        }
-
-        fn is_comparable(&self, other: &Self) -> (result: bool)
-            ensures result == Self::spec_eq(self@, other@).is_some()
-        {
-            self.eq(other).is_some()
-        }
+            ensures forall |x: &Self, y: &Self, z: &Self|
+                #![trigger x.eq_spec(y), y.eq_spec(z)]
+                (x.eq_spec(y) && y.eq_spec(z)) ==> x.eq_spec(z);
     }
 
-    // Broadcast lemmas for automatic axiom availability
-    pub broadcast proof fn lemma_symmetry<T: ProvenPartialEq>(x: T::V, y: T::V)
-        ensures #[trigger] T::spec_eq(x, y) == T::spec_eq(y, x)
+    pub broadcast proof fn lemma_obeys_eq_spec<T: ProvenPartialEq>()
+        ensures #[trigger] T::obeys_eq_spec()
+    {
+        T::proof_obeys_eq_spec();
+    }
+
+    pub broadcast proof fn lemma_symmetry<T: ProvenPartialEq>(x: &T, y: &T)
+        ensures #[trigger] x.eq_spec(y) == y.eq_spec(x)
     {
         T::proof_symmetry();
     }
 
-    pub broadcast proof fn lemma_transitivity<T: ProvenPartialEq>(x: T::V, y: T::V, z: T::V)
-        requires 
-            #[trigger] T::spec_eq(x, y) == Some(true), 
-            #[trigger] T::spec_eq(y, z) == Some(true)
-        ensures T::spec_eq(x, z) == Some(true)
+    pub broadcast proof fn lemma_transitivity<T: ProvenPartialEq>(x: &T, y: &T, z: &T)
+        requires #[trigger] x.eq_spec(y), #[trigger] y.eq_spec(z)
+        ensures x.eq_spec(z)
     {
         T::proof_transitivity();
     }
 
     pub broadcast group group_proven_partialeq {
+        lemma_obeys_eq_spec,
         lemma_symmetry,
         lemma_transitivity,
     }
 
+    // i32 already has eq_spec in vstd
     impl ProvenPartialEq for i32 {
-        open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
-        
-        fn eq(&self, other: &Self) -> (result: Option<bool>) { Some(*self == *other) }
-        fn ne(&self, other: &Self) -> (result: Option<bool>) { Some(*self != *other) }
-        
-        proof fn proof_symmetry() {}
-        proof fn proof_transitivity() {}
-    }
-
-    pub struct MyInt { pub val: i32 }
-    
-    impl View for MyInt {
-        type V = i32;
-        open spec fn view(&self) -> i32 { self.val as i32 }
-    }
-    
-    impl ProvenPartialEq for MyInt {
-        open spec fn spec_eq(a: i32, b: i32) -> Option<bool> { Some(a == b) }
-        
-        fn eq(&self, other: &Self) -> (result: Option<bool>) { Some(self.val == other.val) }
-        fn ne(&self, other: &Self) -> (result: Option<bool>) { Some(self.val != other.val) }
-        
+        proof fn proof_obeys_eq_spec() {}
         proof fn proof_symmetry() {}
         proof fn proof_transitivity() {}
     }

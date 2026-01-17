@@ -1,46 +1,34 @@
-//! Generic functions using ProvenPartialEq as a trait bound.
+//! Demonstrates using ProvenPartialEq as a trait bound.
 
 pub mod use_proven_partialeq {
+    #[cfg(verus_keep_ghost)]
     use vstd::prelude::*;
+    #[cfg(verus_keep_ghost)]
     use crate::proven_partialeq::proven_partialeq::ProvenPartialEq;
-    #[allow(unused_imports)]
+    #[cfg(verus_keep_ghost)]
     use crate::proven_partialeq::proven_partialeq::group_proven_partialeq;
 
+#[cfg(verus_keep_ghost)]
 verus! {
 
     broadcast use group_proven_partialeq;
 
-    pub fn are_equal<T: ProvenPartialEq>(a: &T, b: &T) -> (result: Option<bool>)
-        ensures result == T::spec_eq(a@, b@)
+    pub fn are_equal<T: ProvenPartialEq>(a: &T, b: &T) -> (result: bool)
+        requires T::obeys_eq_spec()
+        ensures result == a.eq_spec(b)
     {
-        a.eq(b)
+        PartialEq::eq(a, b)
     }
 
-    pub fn symmetry_example<T: ProvenPartialEq>(_a: &T, _b: &T)
-        requires T::spec_eq(_a@, _b@) == T::spec_eq(_b@, _a@)
-        ensures T::spec_eq(_b@, _a@) == T::spec_eq(_a@, _b@)
-    {
-    }
-
-    pub fn transitivity_example<T: ProvenPartialEq>(_a: &T, _b: &T, _c: &T)
-        requires 
-            T::spec_eq(_a@, _b@) == Some(true), 
-            T::spec_eq(_b@, _c@) == Some(true)
-        ensures T::spec_eq(_a@, _c@) == Some(true)
+    pub fn symmetry_example<T: ProvenPartialEq>(a: &T, b: &T)
+        ensures a.eq_spec(b) == b.eq_spec(a)
     {
     }
 
-    pub struct EqPair<T: ProvenPartialEq> {
-        pub first: T,
-        pub second: T,
-    }
-
-    impl<T: ProvenPartialEq> EqPair<T> {
-        pub fn are_same(&self) -> (result: Option<bool>)
-            ensures result == T::spec_eq(self.first@, self.second@)
-        {
-            self.first.eq(&self.second)
-        }
+    pub fn transitivity_example<T: ProvenPartialEq>(a: &T, b: &T, c: &T)
+        requires a.eq_spec(b), b.eq_spec(c)
+        ensures a.eq_spec(c)
+    {
     }
 
 } // verus!
